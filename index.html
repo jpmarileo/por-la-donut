@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Donas Patagónicas - Frescas del Sur de Chile</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <style>
+    body { font-family: 'Poppins', system-ui, sans-serif; }
+    .donut-card { transition: all 0.3s; }
+    .donut-card:hover { transform: translateY(-8px); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); }
+    .hero-bg {
+      background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://picsum.photos/id/1015/2000/1200');
+      background-size: cover;
+      background-position: center;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+
+  <!-- HEADER -->
+  <header class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <i class="fas fa-donut text-4xl text-pink-600"></i>
+        <h1 class="text-2xl font-bold text-gray-800">Donas Patagónicas</h1>
+      </div>
+      <div class="flex items-center gap-6">
+        <button onclick="toggleCart()" class="flex items-center gap-2 hover:text-pink-600 transition">
+          <i class="fas fa-shopping-cart text-2xl"></i>
+          <span id="cart-count" class="bg-pink-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero-bg h-screen flex items-center text-white">
+    <div class="max-w-6xl mx-auto px-4 text-center">
+      <h2 class="text-6xl md:text-7xl font-bold mb-4">Donas Artesanales</h2>
+      <p class="text-2xl md:text-3xl mb-8">Frescas, deliciosas y con sabor a Patagonia 🇨🇱</p>
+      <button onclick="document.getElementById('productos').scrollIntoView({behavior: 'smooth'})" 
+              class="bg-pink-600 hover:bg-pink-700 text-white text-xl font-semibold px-10 py-4 rounded-full transition">
+        Ver Sabores
+      </button>
+    </div>
+  </section>
+
+  <!-- PRODUCTOS -->
+  <section id="productos" class="max-w-6xl mx-auto px-4 py-16">
+    <h2 class="text-4xl font-bold text-center mb-12">Nuestros Sabores</h2>
+    <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+      <!-- Los productos se generan con JavaScript -->
+    </div>
+  </section>
+
+  <!-- CARRITO -->
+  <div id="cart-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center">
+    <div class="bg-white w-full max-w-lg mx-4 rounded-2xl overflow-hidden">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-2xl font-bold">Tu Carrito</h3>
+          <button onclick="toggleCart()" class="text-3xl leading-none">&times;</button>
+        </div>
+        <div id="cart-items" class="max-h-96 overflow-y-auto space-y-4"></div>
+      </div>
+      <div class="bg-gray-100 p-6">
+        <div class="flex justify-between text-xl font-semibold mb-6">
+          <span>Total:</span>
+          <span id="cart-total">$0</span>
+        </div>
+        <button onclick="checkout()" 
+                class="w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-xl font-semibold text-lg">
+          Finalizar Pedido por WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const products = [
+      { id: 1, name: "Clásica Glaseada", price: 2500, img: "https://picsum.photos/id/1015/300/300" },
+      { id: 2, name: "Chocolate Rellena", price: 3200, img: "https://picsum.photos/id/201/300/300" },
+      { id: 3, name: "Frutilla con Crema", price: 3500, img: "https://picsum.photos/id/292/300/300" },
+      { id: 4, name: "Dulce de Leche", price: 3000, img: "https://picsum.photos/id/431/300/300" },
+      { id: 5, name: "Oreo Explosion", price: 3400, img: "https://picsum.photos/id/870/300/300" },
+      { id: 6, name: "Limón Merengue", price: 2800, img: "https://picsum.photos/id/133/300/300" },
+      { id: 7, name: "Canela y Azúcar", price: 2400, img: "https://picsum.photos/id/201/300/300" },
+      { id: 8, name: "Nutella Supreme", price: 3800, img: "https://picsum.photos/id/669/300/300" },
+    ];
+
+    let cart = [];
+
+    function renderProducts() {
+      const grid = document.getElementById('products-grid');
+      grid.innerHTML = '';
+      
+      products.forEach(product => {
+        const card = `
+          <div class="donut-card bg-white rounded-2xl overflow-hidden shadow">
+            <img src="${product.img}" class="w-full h-56 object-cover">
+            <div class="p-4">
+              <h3 class="font-semibold text-lg">${product.name}</h3>
+              <p class="text-pink-600 font-bold text-xl mt-2">$${product.price.toLocaleString('es-CL')}</p>
+              <button onclick="addToCart(${product.id})" 
+                      class="mt-4 w-full bg-pink-600 hover:bg-pink-700 text-white py-3 rounded-xl font-medium">
+                Agregar al carrito
+              </button>
+            </div>
+          </div>
+        `;
+        grid.innerHTML += card;
+      });
+    }
+
+    function addToCart(id) {
+      const product = products.find(p => p.id === id);
+      const existing = cart.find(item => item.id === id);
+      
+      if (existing) existing.quantity++;
+      else cart.push({ ...product, quantity: 1 });
+      
+      updateCartCount();
+      alert(`${product.name} agregado al carrito!`);
+    }
+
+    function updateCartCount() {
+      const count = cart.reduce((acc, item) => acc + item.quantity, 0);
+      document.getElementById('cart-count').textContent = count;
+    }
+
+    function toggleCart() {
+      const modal = document.getElementById('cart-modal');
+      modal.classList.toggle('hidden');
+      renderCart();
+    }
+
+    function renderCart() {
+      const container = document.getElementById('cart-items');
+      container.innerHTML = '';
+      
+      if (cart.length === 0) {
+        container.innerHTML = '<p class="text-center text-gray-500 py-8">Tu carrito está vacío</p>';
+        document.getElementById('cart-total').textContent = '$0';
+        return;
+      }
+
+      let total = 0;
+      
+      cart.forEach((item, index) => {
+        const subtotal = item.price * item.quantity;
+        total += subtotal;
+        
+        const itemHTML = `
+          <div class="flex gap-4">
+            <img src="${item.img}" class="w-20 h-20 object-cover rounded-xl">
+            <div class="flex-1">
+              <p class="font-medium">${item.name}</p>
+              <p class="text-sm text-gray-500">$${item.price} × ${item.quantity}</p>
+              <p class="font-semibold">$${subtotal.toLocaleString('es-CL')}</p>
+            </div>
+            <div class="flex flex-col gap-1">
+              <button onclick="changeQuantity(${index}, 1)" class="text-green-600">+</button>
+              <button onclick="changeQuantity(${index}, -1)" class="text-red-600">-</button>
+              <button onclick="removeFromCart(${index})" class="text-xs text-gray-400">Eliminar</button>
+            </div>
+          </div>
+        `;
+        container.innerHTML += itemHTML;
+      });
+      
+      document.getElementById('cart-total').textContent = '$' + total.toLocaleString('es-CL');
+    }
+
+    function changeQuantity(index, change) {
+      cart[index].quantity += change;
+      if (cart[index].quantity < 1) cart.splice(index, 1);
+      renderCart();
+      updateCartCount();
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      renderCart();
+      updateCartCount();
+    }
+
+    function checkout() {
+      if (cart.length === 0) return;
+      
+      let message = "Hola! Quiero hacer el siguiente pedido:%0A%0A";
+      cart.forEach(item => {
+        message += `- ${item.quantity}× ${item.name} ($${item.price})%0A`;
+      });
+      const total = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+      message += `%0ATotal: $${total.toLocaleString('es-CL')}%0A%0A¿Podemos coordinar la entrega?`;
+      
+      window.open(`https://wa.me/569XXXXXXXX?text=${message}`, '_blank');
+    }
+
+    // Inicializar
+    renderProducts();
+  </script>
+</body>
+</html>
