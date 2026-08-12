@@ -2,8 +2,6 @@
 
 Landing page completa de e-commerce para venta de donas artesanales con carrito funcional. Proyecto ideal para portafolio frontend (HTML, CSS, JavaScript).
 
-![Vista previa](https://picsum.photos/id/1015/800/400)
-
 ## 🌟 Características
 
 - **Diseño moderno y responsive** (mobile first)
